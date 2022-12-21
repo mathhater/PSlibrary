@@ -3,5 +3,8 @@
 
 !.gitignore
 !README.md
-!src/
+
+!src
 !src/*
+!src/c
+!src/c/*
