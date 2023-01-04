@@ -64,12 +64,16 @@ int main(void){
 	FILE *in=fopen("input.txt", "r");
 	fseek(in, 0, SEEK_END);
 	int inSize=ftell(in);
-	inBuffer=(char *)malloc(sizeof(char)*(inSize+10000));
+	inBuffer=(char *)malloc(sizeof(char)*(inSize+inSize/50));
+	/*
+		Sometimes, when the buffer size is set as the return value of the ftell function,
+		there is a problem that the entire file cannot be read, so I set it to a larger value.
+	*/
 	fseek(in, 0, SEEK_SET);
-	inSize=fread(inBuffer, 1, inSize+10000, in);
+	inSize=fread(inBuffer, 1, inSize+inSize/50, in);
 	fclose(in);
 
-	outBuffer=(char *)malloc(sizeof(char)*(inSize+10000));
+	outBuffer=(char *)malloc(sizeof(char)*(inSize+inSize/50));
 
     int T=getInt(inBuffer, &inIndex);
     for(int test_case=1; test_case<=T; ++test_case){
