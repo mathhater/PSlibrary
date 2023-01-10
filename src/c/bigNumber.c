@@ -408,110 +408,113 @@ struct BigInt *_multiplyBigInt1(struct BigInt *a, struct BigInt *b){
 }
 
 // too slow
+/*
 
-// struct BigInt *karatsuba(struct BigInt *a, struct BigInt *b){
-// 	// karatsuba
-// 	if(a->size<b->size){
-// 		return karatsuba(b, a);
-// 	}
+struct BigInt *karatsuba(struct BigInt *a, struct BigInt *b){
+	// karatsuba
+	if(a->size<b->size){
+		return karatsuba(b, a);
+	}
 
-// 	if(a->size==1 && b->size==1){
-// 		char str[3];
-// 		int c=(a->digits[0]-'0')*(b->digits[0]-'0');
-// 		if(c>=10){
-// 			str[0]=c/10+'0';
-// 			str[1]=c%10+'0';
-// 			str[2]=0;
-// 		}
-// 		else{
-// 			str[0]=c+'0';
-// 			str[1]=0;
-// 		}
-// 		return createBigInt(str);
-// 	}
+	if(a->size==1 && b->size==1){
+		char str[3];
+		int c=(a->digits[0]-'0')*(b->digits[0]-'0');
+		if(c>=10){
+			str[0]=c/10+'0';
+			str[1]=c%10+'0';
+			str[2]=0;
+		}
+		else{
+			str[0]=c+'0';
+			str[1]=0;
+		}
+		return createBigInt(str);
+	}
 
-// 	// if(a->size<=100){
-// 	// 	return _multiplyBigInt1(a, b);
-// 	// }
+	// if(a->size<=100){
+	// 	return _multiplyBigInt1(a, b);
+	// }
 
-// 	char ch;
-// 	struct BigInt *leftA, *rightA, *leftB, *rightB;
-// 	int p=(a->size+((a->size & 1) ? 1 : 0))/2;
+	char ch;
+	struct BigInt *leftA, *rightA, *leftB, *rightB;
+	int p=(a->size+((a->size & 1) ? 1 : 0))/2;
 
-// 	int q=a->size-p;
-// 	ch=a->digits[q];
-// 	a->digits[q]=0;
-// 	leftA=createBigInt(a->digits);
-// 	a->digits[q]=ch;
-// 	rightA=createBigInt(a->digits+q);
+	int q=a->size-p;
+	ch=a->digits[q];
+	a->digits[q]=0;
+	leftA=createBigInt(a->digits);
+	a->digits[q]=ch;
+	rightA=createBigInt(a->digits+q);
 
-// 	if(b->size<=p){
-// 		char str[2]="0";
-// 		leftB=createBigInt(str);
-// 		rightB=createBigInt(b->digits);
-// 	}
-// 	else{
-// 		int q=b->size-p;
-// 		ch=b->digits[q];
-// 		b->digits[q]=0;
-// 		leftB=createBigInt(b->digits);
-// 		b->digits[q]=ch;
-// 		rightB=createBigInt(b->digits+q);
-// 	}
+	if(b->size<=p){
+		char str[2]="0";
+		leftB=createBigInt(str);
+		rightB=createBigInt(b->digits);
+	}
+	else{
+		int q=b->size-p;
+		ch=b->digits[q];
+		b->digits[q]=0;
+		leftB=createBigInt(b->digits);
+		b->digits[q]=ch;
+		rightB=createBigInt(b->digits+q);
+	}
 
-// 	struct BigInt *z0=karatsuba(leftA, leftB);
-// 	struct BigInt *AA=addBigInt(leftA, rightA);
-// 	struct BigInt *BB=addBigInt(leftB, rightB);
-// 	struct BigInt *z1=karatsuba(AA, BB);
-// 	struct BigInt *z2=karatsuba(rightA, rightB);
+	struct BigInt *z0=karatsuba(leftA, leftB);
+	struct BigInt *AA=addBigInt(leftA, rightA);
+	struct BigInt *BB=addBigInt(leftB, rightB);
+	struct BigInt *z1=karatsuba(AA, BB);
+	struct BigInt *z2=karatsuba(rightA, rightB);
 
-// 	deleteBigInt(leftA);
-// 	deleteBigInt(rightA);
-// 	deleteBigInt(leftB);
-// 	deleteBigInt(rightB);
-// 	deleteBigInt(AA);
-// 	deleteBigInt(BB);
+	deleteBigInt(leftA);
+	deleteBigInt(rightA);
+	deleteBigInt(leftB);
+	deleteBigInt(rightB);
+	deleteBigInt(AA);
+	deleteBigInt(BB);
 
-// 	struct BigInt *z10=subtractBigInt(z1, z0);
-// 	struct BigInt *z=subtractBigInt(z10, z2);
+	struct BigInt *z10=subtractBigInt(z1, z0);
+	struct BigInt *z=subtractBigInt(z10, z2);
 
-// 	if(z0->digits[0]!='0'){
-// 		char *str=(char *)malloc(sizeof(char)*(z0->size+p*2+1));
-// 		strcpy(str, z0->digits);
-// 		for(int i=0; i<p*2; ++i){
-// 			str[z0->size+i]='0';
-// 		}
-// 		str[z0->size+p*2]=0;
-// 		z0->size+=p*2;
-// 		z0->digits=(char *)realloc(z0->digits, z0->size+1);
-// 		strcpy(z0->digits, str);
-// 		free(str);
-// 	}
+	if(z0->digits[0]!='0'){
+		char *str=(char *)malloc(sizeof(char)*(z0->size+p*2+1));
+		strcpy(str, z0->digits);
+		for(int i=0; i<p*2; ++i){
+			str[z0->size+i]='0';
+		}
+		str[z0->size+p*2]=0;
+		z0->size+=p*2;
+		z0->digits=(char *)realloc(z0->digits, z0->size+1);
+		strcpy(z0->digits, str);
+		free(str);
+	}
 
-// 	if(z->digits[0]!='0'){
-// 		char *str=(char *)malloc(sizeof(char)*(z->size+p+1));
-// 		strcpy(str, z->digits);
-// 		for(int i=0; i<p; ++i){
-// 			str[z->size+i]='0';
-// 		}
-// 		str[z->size+p]=0;
-// 		z->size+=p;
-// 		z->digits=(char *)realloc(z->digits, z->size+1);
-// 		strcpy(z->digits, str);
-// 		free(str);
-// 	}
+	if(z->digits[0]!='0'){
+		char *str=(char *)malloc(sizeof(char)*(z->size+p+1));
+		strcpy(str, z->digits);
+		for(int i=0; i<p; ++i){
+			str[z->size+i]='0';
+		}
+		str[z->size+p]=0;
+		z->size+=p;
+		z->digits=(char *)realloc(z->digits, z->size+1);
+		strcpy(z->digits, str);
+		free(str);
+	}
 
-// 	struct BigInt *tmp=addBigInt(z, z0);
-// 	struct BigInt *res=addBigInt(z2, tmp);
-// 	deleteBigInt(z0);
-// 	deleteBigInt(z1);
-// 	deleteBigInt(z2);
-// 	deleteBigInt(z10);
-// 	deleteBigInt(z);
-// 	deleteBigInt(tmp);
+	struct BigInt *tmp=addBigInt(z, z0);
+	struct BigInt *res=addBigInt(z2, tmp);
+	deleteBigInt(z0);
+	deleteBigInt(z1);
+	deleteBigInt(z2);
+	deleteBigInt(z10);
+	deleteBigInt(z);
+	deleteBigInt(tmp);
 
-// 	return res;
-// }
+	return res;
+}
+
+*/
 
 struct BigInt *_multiplyBigInt2(struct BigInt *a, struct BigInt *b){
 	// fft
@@ -597,6 +600,96 @@ struct BigInt *multiplyBigInt(struct BigInt *a, struct BigInt *b){
 	return res;
 }
 
+struct BigInt *_divideBigInt1(struct BigInt *a, struct BigInt *b){
+	char ch, str[2]="0", _zero[2]="0", _ten[3]="10";
+	struct BigInt *zero=createBigInt(_zero), *ten=createBigInt(_ten);
+	struct BigInt *tmp, *ttmp, *r=createBigInt(_zero), *q=createBigInt(_zero);
+
+	for(int i=0; i<=a->size; ++i){
+		int cnt=0;
+		while(cmpDigitsBigInt(r, b)>=0){
+			tmp=subtractBigInt(r, b);
+			deleteBigInt(r);
+			r=tmp;
+			++cnt;
+		}
+		tmp=multiplyBigInt(q, ten);
+		deleteBigInt(q);
+		q=tmp;
+
+		str[0]=cnt+'0';
+		str[1]=0;
+		tmp=createBigInt(str);
+		ttmp=addBigInt(q, tmp);
+		deleteBigInt(tmp);
+		deleteBigInt(q);
+		q=ttmp;
+
+		if(i!=a->size){
+			tmp=multiplyBigInt(r, ten);
+			deleteBigInt(r);
+			r=tmp;
+
+			ch=a->digits[i+1];
+			a->digits[i+1]=0;
+			tmp=createBigInt(a->digits+i);
+			a->digits[i+1]=ch;
+			ttmp=addBigInt(r, tmp);
+			deleteBigInt(tmp);
+			deleteBigInt(r);
+			r=ttmp;
+		}
+	}
+
+	deleteBigInt(zero);
+	deleteBigInt(ten);
+	deleteBigInt(r);
+	return q;
+}
+
+struct BigInt *divideBigInt(struct BigInt *a, struct BigInt *b){
+	if(b->digits[0]=='0'){
+		printf("do not divide by 0\n");
+		exit(1);
+	}
+	if(a->digits[0]=='0'){
+		char tmp[2]="0";
+		return createBigInt(tmp);
+	}
+
+	int asign=a->sign, bsign=b->sign;
+	a->sign=b->sign=PLUS;
+	struct BigInt *q=_divideBigInt1(a, b);
+	if(asign==bsign){
+		q->sign=PLUS;
+	}
+	else{
+		q->sign=MINUS;
+	}
+
+	return q;
+}
+
+struct BigInt *modularBigInt(struct BigInt *a, struct BigInt *b){
+	if(b->digits[0]=='0'){
+		printf("do not divide by 0\n");
+		exit(1);
+	}
+	if(a->digits[0]=='0'){
+		char tmp[2]="0";
+		return createBigInt(tmp);
+	}
+
+	int asign=a->sign, bsign=b->sign;
+	a->sign=b->sign=PLUS;
+	struct BigInt *q=divideBigInt(a, b);
+	struct BigInt *qb=multiplyBigInt(q, b);
+	struct BigInt *r=subtractBigInt(a, qb);
+	r->sign=asign;
+
+	return r;
+}
+
 int main(void){
 	char A[300001], B[300001];
 
@@ -604,8 +697,14 @@ int main(void){
 
 	struct BigInt *a=createBigInt(A);
 	struct BigInt *b=createBigInt(B);
-	struct BigInt *c=multiplyBigInt(a, b);
+	struct BigInt *c=divideBigInt(a, b);
+	struct BigInt *d=modularBigInt(a, b);
+	printf("c: ");
 	printBigInt(c);
+	printf("\n");
+	printf("d: ");
+	printBigInt(d);
+	printf("\n");
 
 	deleteBigInt(a);
 	deleteBigInt(b);
