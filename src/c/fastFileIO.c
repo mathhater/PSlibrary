@@ -28,6 +28,39 @@ long long getInt(char *input, int *index){
 	return flag ? -result : result;
 }
 
+double getDouble(char *input, int *index){
+	double result=0;
+	int flag=0;
+	if(input[*index]=='-'){
+		++(*index);
+		flag=1;
+	}
+	long long resultI=0, resultD=0, result10=0;
+	int lenD=0;
+	while(input[*index]!='.' && input[*index]!='\n' && input[*index]!=' ' && input[*index]!='\0'){
+		resultI*=10;
+		resultI+=input[*index]-'0';
+		++(*index);
+	}
+	if(input[*index]=='.'){
+		++(*index);
+		while(input[*index]!='\n' && input[*index]!=' ' && input[*index]!='\0'){
+			resultD*=10;
+			resultD+=input[*index]-'0';
+			++(*index);
+			++lenD;
+		}
+	}
+	++(*index);
+	if(lenD){
+		while(lenD--){
+			result10*=10;
+		}
+	}
+	result=(double)resultI+(result10 ? (double)resultD/(double)result10 : 0.0);
+	return flag ? -result : result;
+}
+
 void setString(char *output, int *outputSize, char *input, int len){
 	strcpy(output+(*outputSize), input);
 	(*outputSize)+=len;
@@ -55,6 +88,14 @@ void setInt(char *output, int *index, long long x){
 	while(idx--){
 		output[(*index)++]=str[idx];
 	}
+}
+
+void setDouble(char *output, int *outputSize, double x){
+	char str[100];
+	sprintf(str, "%.15lf", x);
+	int len=strlen(str);
+	strcpy(output+(*outputSize), str);
+	(*outputSize)+=len;
 }
 
 int main(void){
