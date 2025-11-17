@@ -8,3 +8,5 @@
 !src/*
 !src/c
 !src/c/*
+!src/python
+!src/python/*
